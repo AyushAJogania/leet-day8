@@ -1,0 +1,32 @@
+#include <vector>
+#include <algorithm>
+
+class Solution {
+public:
+    int calculateMinimumHP(std::vector<std::vector<int>>& dungeon) {
+        int m = dungeon.size();
+        int n = dungeon[0].size();
+        
+        std::vector<std::vector<int>> dp(m, std::vector<int>(n));
+        
+        dp[m - 1][n - 1] = std::max(1, 1 - dungeon[m - 1][n - 1]);
+        
+        for (int i = m - 2; i >= 0; --i) {
+            dp[i][n - 1] = std::max(1, dp[i + 1][n - 1] - dungeon[i][n - 1]);
+        }
+        
+        for (int j = n - 2; j >= 0; --j) {
+            dp[m - 1][j] = std::max(1, dp[m - 1][j + 1] - dungeon[m - 1][j]);
+        }
+        
+        for (int i = m - 2; i >= 0; --i) {
+            for (int j = n - 2; j >= 0; --j) {
+                int right = std::max(1, dp[i][j + 1] - dungeon[i][j]);
+                int down = std::max(1, dp[i + 1][j] - dungeon[i][j]);
+                dp[i][j] = std::min(right, down);
+            }
+        }
+        
+        return dp[0][0];
+    }
+};
